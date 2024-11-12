@@ -29,7 +29,7 @@ const loggedIn = { firstName: 'Adrian', lastName: 'JSM', email: 'contact@JSMmast
       <RightSidebar 
        user={loggedIn}
        transactions={[]}
-       banks={[{}, {}]}
+       banks={[{currentBalance: 120.50}, {currentBalance:200.50}]}
       />
     </section>
   )
