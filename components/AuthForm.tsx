@@ -17,33 +17,34 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
-const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
-    }),
-})
+import CustomInput from './CustomInput'
+import { AuthformSchema } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 
 
 const AuthForm = ({type}:{type:string}) => 
 {
-const [user, setUser] = useState(null)
+const [user, setUser] = useState(null);
+const [isLoading, setisLoading] = useState(false);
 
- // 1. Define your form.
- const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
-  })
- 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
-  }
+// 1. Define your form.
+const form = useForm<z.infer<typeof AuthformSchema>>({
+  resolver: zodResolver(AuthformSchema),
+  defaultValues: {
+    email: "",
+    password: '',
+  },
+})
+
+// 2. Define a submit handler.
+function onSubmit(values: z.infer<typeof AuthformSchema>) {
+  // Do something with the form values.
+  // ✅ This will be type-safe and validated.
+  setisLoading(true)
+  console.log(values)
+  setisLoading(false)
 }
+
 
   return (
     <section className='auth-form'>
@@ -79,34 +80,30 @@ const [user, setUser] = useState(null)
             <div className='flex flex-col gap-4'>
                 {/* PlaidLink*/}
             </div>
-        ):(
+        ): (
             <>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>
-                            Username
-                        </FormLabel>
-                    <FormControl>
-                        <Input placeholder="shadcn" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                        This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                    </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+                
+                <CustomInput control={form.control} name='email' label='Email' placeholder='Enter your email'/>
 
+                <CustomInput control={form.control} name='password' label='Password' placeholder='Enter your password'/>
+                
+                <Button type="submit" className='form-btn'>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20}
+                      className='animate-spin' /> &nbsp;
+                      Loading...
+                    </>
+                  ) : type === 'sign-in'
+                      ? 'Sign In' : 'Sign Up'}
+                </Button>
+
+                </form>
+              </Form>
             </>
-        )}
+          )}
     </section>
   )
 }
