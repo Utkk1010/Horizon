@@ -48,22 +48,40 @@ const onSubmit = async (data: z.infer<typeof formSchema>)=>
   
   try {
     //Sign up with Appwrite and create plaid tokens
+
     if(type === 'sign-up'){
-      const newUser = await signUp(data);
+
+      const userData = {
+        firstName: data.firstName!,
+        lastName: data.lastName!,
+        address1: data.address1!,
+        city: data.city!,
+        postalCode: data.postalCode!,
+        email: data.email,
+        password: data.password,
+        ssn: data.ssn!,
+        state: data.state!,
+        dateOfBirth: data.dateOfBirth!,
+      }
+
+      const newUser = await signUp(userData);
       setUser(newUser)
+
     }
+
     if(type === 'sign-in'){
+
       const response = await signIn({
         email: data.email,
         password: data.password,
       })
-      if(response) router.push('/')  
+
+      if(response) router.push('/') 
     }
   } catch (error) {
     console.log(error)
   }
 }
-
 
   return (
     <section className='auth-form'>
@@ -95,11 +113,11 @@ const onSubmit = async (data: z.infer<typeof formSchema>)=>
                 </h1>
             </div>
         </header>
-        {/*{user ? (*/}
+        {user ? (
             <div className='flex flex-col gap-4'>
                 <PlaidLink user={user} variant='primary'/>
             </div>
-        {/*}): (*/}
+        ): (
             <>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -159,7 +177,7 @@ const onSubmit = async (data: z.infer<typeof formSchema>)=>
                   </Link>
               </footer>
             </>
-          {/*)}*/}
+          )}
     </section>
   )
 }
